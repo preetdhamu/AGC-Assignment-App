@@ -67,11 +67,11 @@ class _AddAssignmentState extends State<AddAssignment> {
     String? docxPath = await pickDocxFile();
 
     if (docxPath != null) {
-      final file = await DefaultAssetBundle.of(context).load("assets/b.docx");
-      final bytes = file.buffer.asUint8List();
+      // final file = await DefaultAssetBundle.of(context).load("assets/b.docx");
+      // final bytes = file.buffer.asUint8List();
 
-      // final file = File(docxPath);
-      // final bytes = await file.readAsBytes();
+      final file = File(docxPath);
+      final bytes = await file.readAsBytes();
       final text = await docxToText(bytes, handleNumbering: true);
 
       extractQuestions(text);

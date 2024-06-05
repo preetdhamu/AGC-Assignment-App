@@ -49,19 +49,6 @@ class Subject {
   });
   }
 
-//   void addAssignment(Assignment assignment) {
-//   DatabaseReference reference = FirebaseDatabase.instance.ref();
-//   DatabaseReference subjectReference = reference.child(_subjectcode).child("assignments");
-
-//   // Append the new assignment to the existing list
-//   subjectReference.child("${_assignments.length}").set(assignment.toJson()).then((_) {
-//     _assignments.add(assignment);
-//     print("Assignment added to database successfully");
-//   }).catchError((error) {
-//     print("Error adding assignment to the database: $error");
-//   });
-// }
-
   Subject.fromSnapShot(DataSnapshot snapshot) {
     Map<dynamic, dynamic>? map = snapshot.value as Map<dynamic, dynamic>?;
 
