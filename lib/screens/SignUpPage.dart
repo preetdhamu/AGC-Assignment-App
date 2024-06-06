@@ -1,3 +1,5 @@
+import 'dart:ffi';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:agc/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
@@ -17,6 +19,8 @@ class _SignUpPageState extends State<SignUpPage> {
   GlobalKey<FormState> _key = GlobalKey();
   String username = '';
   String password = '';
+  
+
   bool _autovalidate = false;
   @override
   void initState() {
@@ -39,26 +43,17 @@ class _SignUpPageState extends State<SignUpPage> {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      // User? user = FirebaseAuth.instance.currentUser;
-      //       if (user != null) {
-      //   try {
-      //     if (user.displayName == null) {
-      //       await user.updateDisplayName(name);
-      //       await user.updatePhoneNumber(phoneCredential);
-      //       await user.reload();
-      //       user = FirebaseAuth.instance.currentUser;
-      //       await Navigator.pushReplacement(context,
-      //           MaterialPageRoute(builder: (context) {
-      //         return Login();
-      //       }));
-      //     }
-      //   } catch (e) {
-      //     print("Error updating/displaying user details: $e");
-      //   }
-      // } else {
-      //   print("User creation failed");
-      //   // Handle the case where the user is not created successfully
-      // }
+      print(email);
+      String domain = email.split('@').last;
+      List<String> teacherDomains = ['agc.edu', 'college.edu', 'school.edu'];
+      bool isTeacher =
+          teacherDomains.any((teacherDomains) => domain == teacherDomains);
+      print("isTeacher is : ${isTeacher}");
+      await FirebaseDatabase.instance
+          .ref()
+          .child('users')
+          .child(FirebaseAuth.instance.currentUser!.uid)
+          .set({'email': email, 'isTeacher': isTeacher});
     } on FirebaseAuthException catch (e) {
       return showDialog(
           context: context,
@@ -89,10 +84,11 @@ class _SignUpPageState extends State<SignUpPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Padding(padding: EdgeInsets.all(15.0)),
               SizedBox(
                 child: Image(
                   image: AssetImage('images/logo.png'),
-                  width: 450.0,
+                  width: 250.0,
                   height: 100.0,
                   fit: BoxFit.fill,
                 ),
@@ -104,6 +100,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Username";
@@ -128,6 +127,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
                   obscureText: true,
                   validator: (input) {
                     if (input!.isEmpty && input.length > 7) {
@@ -164,7 +166,10 @@ class _SignUpPageState extends State<SignUpPage> {
               Padding(
                 padding: EdgeInsets.all(25.0),
               ),
-              Text("Have a account ? " , style: TextStyle( color: Colors.black),),
+              Text(
+                "Have a account ? ",
+                style: TextStyle(color: Colors.black),
+              ),
               InkWell(
                 onTap: () {
                   Navigator.pushReplacement(context,
@@ -172,15 +177,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     return HomePage();
                   }));
                 },
-                child: Text("Login Here" , style: TextStyle(
-                  color: Colors.black ,
-                ),),
+                child: Text(
+                  "Login Here",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
               )
             ],
           ),
         ),
       ),
-       backgroundColor: Color.fromARGB(255, 177, 220, 255),
+      backgroundColor: Colors.white,
     );
   }
 
@@ -189,7 +197,7 @@ class _SignUpPageState extends State<SignUpPage> {
       _key.currentState!.save();
       username = username.trim();
       password = password.trim();
-      username = "$username.agc@gmail.com";
+
       await Registerprocess(username, password);
       //create firebase account
     } else {

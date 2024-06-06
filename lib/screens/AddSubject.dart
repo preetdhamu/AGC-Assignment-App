@@ -16,24 +16,44 @@ class _AddSubjectState extends State<AddSubject> {
   navigateToLastScreen(BuildContext context) {
     Navigator.of(context).pop();
   }
+_setValuesToKey() async {
+  if (_key.currentState!.validate()) {
+    _key.currentState!.save();
+    _subjectname = _subjectname.trim();
+    _subjectcode = _subjectcode.trim();
+    _subjectcode = _subjectcode.toUpperCase();
+    _subjectname = _subjectname.toUpperCase();
 
-  _setValuesToKey() async {
-    if (_key.currentState!.validate()) {
-      _key.currentState!.save();
-      _subjectname = _subjectname.trim();
-      _subjectcode = _subjectcode.trim();
-      _subjectcode = _subjectcode.toUpperCase();
+    try {
+      // Check if subject code already exists
+      DataSnapshot codeSnapshot = await _databaseReference.child(_subjectcode).get();
 
+      if (codeSnapshot.exists) {
+        // Subject code already exists
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Subject code already exists. Please use a different code."),
+        ));
+        return; // Exit the function early
+      }
+
+      // Subject code does not exist, proceed with adding
       Subject sub = Subject(_subjectcode, _subjectname);
       await _databaseReference.child(_subjectcode).set(sub.toJson());
-      print("Subject Created SuccessFully ");
+      print("Subject Created Successfully");
       navigateToLastScreen(context);
-    } else {
-      setState(() {
-        _autovalidate = true;
-      });
+
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("An error occurred while checking for duplicates."),
+      ));
     }
+  } else {
+    setState(() {
+      _autovalidate = true;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {

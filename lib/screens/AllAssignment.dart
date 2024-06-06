@@ -1,3 +1,4 @@
+import 'package:agc/model/Subject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -8,10 +9,10 @@ import 'PreviewAssignment.dart';
 
 class AllAssignment extends StatefulWidget {
   final String id;
-  const AllAssignment({Key? key, required this.id}) : super(key: key);
+  const AllAssignment({Key? key, required this.id }) : super(key: key);
 
   @override
-  State<AllAssignment> createState() => _AllAssignmentState(id);
+  State<AllAssignment> createState() => _AllAssignmentState(id );
 }
 
 class _AllAssignmentState extends State<AllAssignment> {
@@ -51,13 +52,25 @@ class _AllAssignmentState extends State<AllAssignment> {
 
   navigateToEditAssignment(String assignmentId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return EditAssignment(id: id , assignmentId: assignmentId,);
+      return EditAssignment(
+        id: id,
+        assignmentId: assignmentId,
+      );
     }));
   }
 
-  navigateToPreViewAssignment(String assignmentId) {
+  navigateToPreViewAssignment(
+      String assignmentId, String course, String semester, String department , String subname , String subcode) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return PreviewAssignment(id: id , assignmentId: assignmentId,);
+      return PreviewAssignment(
+          id: id,
+          assignmentId: assignmentId,
+          course: course,
+          semester: semester,
+          department: department ,
+          subname:subname , 
+          subcode:subcode ,
+          );
     }));
   }
 
@@ -105,7 +118,14 @@ class _AllAssignmentState extends State<AllAssignment> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  navigateToPreViewAssignment(snapshot.key!);
+                                  navigateToPreViewAssignment(
+                                      snapshot.key!,
+                                      value['course'].toString(),
+                                      value['semester'].toString(),
+                                      value['department'].toString() ,
+                                      _subname,
+                                      _subcode
+                                      );
                                 },
                                 child: Icon(
                                   Icons.remove_red_eye,

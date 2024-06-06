@@ -1,25 +1,46 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 
 class PreviewAssignment extends StatefulWidget {
   final String id; // This is the assignment ID
   final String assignmentId;
-  PreviewAssignment({required this.id, required this.assignmentId});
+  final String semester;
+  final String course;
+  final String department;
+  final String subname;
+  final String subcode;
+  PreviewAssignment(
+      {required this.id,
+      required this.assignmentId,
+      required this.course,
+      required this.semester,
+      required this.department,
+      required this.subname,
+      required this.subcode});
 
   @override
   State<StatefulWidget> createState() {
-    return _PreviewAssignmentState(this.id, this.assignmentId);
+    return _PreviewAssignmentState(this.id, this.assignmentId, this.course,
+        this.semester, this.department, this.subname, this.subcode);
   }
 }
 
 class _PreviewAssignmentState extends State<PreviewAssignment> {
   final String id;
   final String assignmentId;
+  final String course;
+  final String semester;
+  final String department;
+  final String subname;
+  final String subcode;
   late List<Map<String, dynamic>> questions = [];
   bool isLoading = true;
 
-  _PreviewAssignmentState(this.id, this.assignmentId);
+  _PreviewAssignmentState(
+      this.id, this.assignmentId, this.course, this.semester, this.department , this.subname , this.subcode);
 
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
 
@@ -108,16 +129,15 @@ class _PreviewAssignmentState extends State<PreviewAssignment> {
                           throw Exception(
                               "User not Provided Correct Credentials");
                         }
-                      }
-                      else{
+                      } else {
                         return showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text("Error"),
-                              content: Text("FIll the Credentials First"),
-                            );
-                          });
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Error"),
+                                content: Text("FIll the Credentials First"),
+                              );
+                            });
                       }
                     } on FirebaseAuthException catch (e) {
                       return showDialog(
@@ -144,45 +164,150 @@ class _PreviewAssignmentState extends State<PreviewAssignment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Preview Assignment'),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: questions.length,
-                    itemBuilder: (context, index) {
-                      final question = questions[index];
-                      return ListTile(
-                        title: Text(question['question']),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Option 1: ${question['option1']}'),
-                            Text('Option 2: ${question['option2']}'),
-                            Text('Option 3: ${question['option3']}'),
-                            Text('Option 4: ${question['option4']}'),
-                            Text(
-                                'Correct Answer: ${question['correctAnswer']}'),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+        backgroundColor: Colors.white,
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: Column(
+                  children: [
+                    Table(
+                      border: TableBorder.all(color: Colors.black),
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: [
+                        TableRow(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Image(
+                                        image: AssetImage('images/logo.png'),
+                                        fit: BoxFit.cover,
+                                      ))),
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Text("${course}" , style: TextStyle( color:  Colors.black),),
+                                          Text("${semester}" , style: TextStyle( color:  Colors.black),),
+                                          Text("${department}" , style: TextStyle( color:  Colors.black),),
+                                        ],
+                                      ))),
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Column(
+                                        children: [
+                                          Text("${subcode}" , style: TextStyle(color: Colors.black),),
+                                          Text("${subname}" , style: TextStyle(color: Colors.black),),
+                                        ],
+                                      ))),
+                            ]),
+                      ],
+                    ),
+                    const Padding(padding: EdgeInsets.all(15.0)),
+                    Table(
+                      border: TableBorder.all(color: Colors.black),
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: const [
+                        TableRow(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text("Question" , style:TextStyle(color: Colors.black)))),
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text("Question" , style:TextStyle(color: Colors.black)))),
+                              TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text("Solution" , style:TextStyle(color: Colors.black)))),
+                            ]),
+                        
+                      ],
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: questions.length,
+                          itemBuilder: (context, index) {
+                            final question = questions[index];
+                            return Table(
+                              border: TableBorder.all(color: Colors.black),
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              children: [
+                                TableRow(children: [
+                                  TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text(question['question'] , style:TextStyle(color: Colors.black)))),
+                                  TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                  "Options 1 : ${question['option1']}" , style:TextStyle(color: Colors.black)),
+                                              Text(
+                                                  "Options 2 : ${question['option2']}" , style:TextStyle(color: Colors.black)),
+                                              Text(
+                                                  "Options 3 : ${question['option3']}" , style:TextStyle(color: Colors.black)),
+                                              Text(
+                                                  "Options 4 :${question['option4']}" , style:TextStyle(color: Colors.black)),
+                                              
+                                            ],
+                                          ))),
+                                          TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child:
+                                           Text("Correct :${question['correctAnswer']}" , style:TextStyle(color: Colors.black)),
+                                      )),
+                                ]),
+                                
+                              ],
+                            );
+                          }),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      _deleteAssignment();
-                    },
-                    child: Text(
+              ),
+              floatingActionButton: ElevatedButton(
+                onPressed: (){
+                  _deleteAssignment();
+                },
+                child: Text(
                       "Delete",
                       style: TextStyle(color: Colors.red),
                     )),
-              ],
-            ),
-    );
+              );
   }
 }

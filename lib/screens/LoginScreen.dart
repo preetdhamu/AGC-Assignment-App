@@ -54,11 +54,14 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Padding(padding: EdgeInsets.all(15.0)),
               SizedBox(
+                 
                 child: Image(
                   image: AssetImage('images/logo.png'),
-                  width: 450.0,
+                  width: 250.0,
                   height: 100.0,
+                
                   fit: BoxFit.fill,
                 ),
               ),
@@ -69,6 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style:TextStyle(
+                    color:Colors.black ,
+                  ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Username";
@@ -93,6 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style:TextStyle(
+                    color:Colors.black ,
+                  ),
                   obscureText: true,
                   validator: (input) {
                     if (input!.isEmpty && input.length > 7) {
@@ -146,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      backgroundColor: Color.fromARGB(255, 177, 220, 255),
+      backgroundColor: Colors.white,
     );
   }
 
@@ -188,9 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
       username = username.trim();
       password = password.trim();
       // String randomNumber = await _randomnumbergenerator(1000);
-      String formattedUsername = "$username.agc@gmail.com";
-      formattedUsername = formattedUsername.trim();
-      _loginprocess(formattedUsername, password);
+      _loginprocess(username, password);
     } else {
       setState(() {
         _autovalidate = true;
