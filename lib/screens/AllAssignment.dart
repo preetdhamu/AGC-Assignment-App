@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:agc/model/Subject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -8,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'AddAssignment.dart';
 import 'EditAssignment.dart';
 import 'PreviewAssignment.dart';
+import 'StartAssignment.dart';
 
 class AllAssignment extends StatefulWidget {
   final String id;
@@ -25,6 +24,7 @@ class _AllAssignmentState extends State<AllAssignment> {
   late String _subname;
   late String _subcode;
   final bool isTeacher;
+  bool isButtonEnabled = true;
 
   _AllAssignmentState(this.id, this.isTeacher);
 
@@ -65,6 +65,22 @@ class _AllAssignmentState extends State<AllAssignment> {
   navigateToEditAssignment(String assignmentId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return EditAssignment(id: id, assignmentId: assignmentId);
+    }));
+  }
+
+  navigateToStartAssignment(String assignmentId, String course, String semester,
+      String department, String subname, String subcode, String deadline) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return StartAssignment(
+        id: id,
+        assignmentId: assignmentId,
+        course: course,
+        semester: semester,
+        department: department,
+        subname: subname,
+        subcode: subcode,
+        deadline: deadline,
+      );
     }));
   }
 
@@ -142,33 +158,59 @@ class _AllAssignmentState extends State<AllAssignment> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              InkWell(
-                                onTap: () {
-                                  navigateToPreViewAssignment(
-                                      snapshot.key!,
-                                      value['course'].toString(),
-                                      value['semester'].toString(),
-                                      value['department'].toString(),
-                                      _subname,
-                                      _subcode,
-                                      '${value['deadline'] != null ? addOneDay(value['deadline']) : "$value['deadline']"}');
-                                },
-                                child: Icon(
-                                  Icons.remove_red_eye,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              isTeacher ? InkWell(
-                                  onTap: () {
-                                      navigateToEditAssignment(
-                                        snapshot.key!,
-                                      );
-                                  },
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.black,
-                                  ),
-                                  ):SizedBox.shrink(),
+                              isTeacher
+                                  ? InkWell(
+                                      onTap: () {
+                                        navigateToPreViewAssignment(
+                                            snapshot.key!,
+                                            value['course'].toString(),
+                                            value['semester'].toString(),
+                                            value['department'].toString(),
+                                            _subname,
+                                            _subcode,
+                                            '${value['deadline'] != null ? addOneDay(value['deadline']) : "$value['deadline']"}');
+                                      },
+                                      child: Icon(
+                                        Icons.remove_red_eye,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
+                              isTeacher
+                                  ? InkWell(
+                                      onTap: () {
+                                        navigateToEditAssignment(
+                                          snapshot.key!,
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
+                              !isTeacher
+                                  ? Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0.0, 8.0, 8.0, 0.0),
+                                      child: MaterialButton(
+                                        onPressed: () {
+                                          navigateToStartAssignment(
+                                              snapshot.key!,
+                                              value['course'].toString(),
+                                              value['semester'].toString(),
+                                              value['department'].toString(),
+                                              _subname,
+                                              _subcode,
+                                              '${value['deadline'] != null ? addOneDay(value['deadline']) : "$value['deadline']"}');
+                                        },
+                                        child: Text(
+                                          "Start",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                           Text(
