@@ -1,18 +1,22 @@
+import 'dart:ui';
+
 import 'package:agc/model/Subject.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-
+import 'package:intl/intl.dart';
 import 'AddAssignment.dart';
 import 'EditAssignment.dart';
 import 'PreviewAssignment.dart';
 
 class AllAssignment extends StatefulWidget {
   final String id;
-  const AllAssignment({Key? key, required this.id }) : super(key: key);
+  final bool isTeacher;
+  const AllAssignment({Key? key, required this.id, required this.isTeacher})
+      : super(key: key);
 
   @override
-  State<AllAssignment> createState() => _AllAssignmentState(id );
+  State<AllAssignment> createState() => _AllAssignmentState(id, isTeacher);
 }
 
 class _AllAssignmentState extends State<AllAssignment> {
@@ -20,8 +24,9 @@ class _AllAssignmentState extends State<AllAssignment> {
   bool isLoading = true;
   late String _subname;
   late String _subcode;
+  final bool isTeacher;
 
-  _AllAssignmentState(this.id);
+  _AllAssignmentState(this.id, this.isTeacher);
 
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
 
@@ -31,8 +36,15 @@ class _AllAssignmentState extends State<AllAssignment> {
     getSubject(id);
   }
 
+  String addOneDay(String dateString) {
+    DateTime date = DateTime.parse(dateString);
+    DateTime newDate = date.add(Duration(days: 1));
+    String formattedDate = DateFormat('yyyy-MM-dd').format(newDate);
+    return formattedDate;
+  }
+
   getSubject(String id) async {
-    _databaseReference.child(id).onValue.listen((event) {
+    _databaseReference.child('subjects').child(id).onValue.listen((event) {
       final data = event.snapshot.value as Map?;
       if (data != null) {
         setState(() {
@@ -52,25 +64,29 @@ class _AllAssignmentState extends State<AllAssignment> {
 
   navigateToEditAssignment(String assignmentId) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return EditAssignment(
-        id: id,
-        assignmentId: assignmentId,
-      );
+      return EditAssignment(id: id, assignmentId: assignmentId);
     }));
   }
 
   navigateToPreViewAssignment(
-      String assignmentId, String course, String semester, String department , String subname , String subcode) {
+      String assignmentId,
+      String course,
+      String semester,
+      String department,
+      String subname,
+      String subcode,
+      String deadline) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return PreviewAssignment(
-          id: id,
-          assignmentId: assignmentId,
-          course: course,
-          semester: semester,
-          department: department ,
-          subname:subname , 
-          subcode:subcode ,
-          );
+        id: id,
+        assignmentId: assignmentId,
+        course: course,
+        semester: semester,
+        department: department,
+        subname: subname,
+        subcode: subcode,
+        deadline: deadline,
+      );
     }));
   }
 
@@ -90,7 +106,10 @@ class _AllAssignmentState extends State<AllAssignment> {
           : Container(
               color: Colors.blue[100],
               child: FirebaseAnimatedList(
-                  query: _databaseReference.child(id).child('Assigments'),
+                  query: _databaseReference
+                      .child('subjects')
+                      .child(id)
+                      .child('Assigments'),
                   itemBuilder: (BuildContext context, DataSnapshot snapshot,
                       Animation<double> animation, int index) {
                     var value =
@@ -106,6 +125,13 @@ class _AllAssignmentState extends State<AllAssignment> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(
+                            'Deadline: ${value['deadline'] != null ? addOneDay(value['deadline']) : "DOU:$value['deadline']"}',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -122,24 +148,27 @@ class _AllAssignmentState extends State<AllAssignment> {
                                       snapshot.key!,
                                       value['course'].toString(),
                                       value['semester'].toString(),
-                                      value['department'].toString() ,
+                                      value['department'].toString(),
                                       _subname,
-                                      _subcode
-                                      );
+                                      _subcode,
+                                      '${value['deadline'] != null ? addOneDay(value['deadline']) : "$value['deadline']"}');
                                 },
                                 child: Icon(
                                   Icons.remove_red_eye,
                                   color: Colors.black,
                                 ),
                               ),
-                              InkWell(
+                              isTeacher ? InkWell(
                                   onTap: () {
-                                    navigateToEditAssignment(snapshot.key!);
+                                      navigateToEditAssignment(
+                                        snapshot.key!,
+                                      );
                                   },
                                   child: Icon(
                                     Icons.edit,
                                     color: Colors.black,
-                                  )),
+                                  ),
+                                  ):SizedBox.shrink(),
                             ],
                           ),
                           Text(
@@ -161,12 +190,14 @@ class _AllAssignmentState extends State<AllAssignment> {
                     );
                   }),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigateToAddAssignment(id);
-        },
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: isTeacher
+          ? FloatingActionButton(
+              onPressed: () {
+                navigateToAddAssignment(id);
+              },
+              child: Icon(Icons.add),
+            )
+          : SizedBox.shrink(),
     );
   }
 }

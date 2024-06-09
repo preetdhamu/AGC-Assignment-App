@@ -28,7 +28,17 @@ class _LoginScreenState extends State<LoginScreen> {
   checkAuthentication() async {
     await FirebaseAuth.instance.authStateChanges().listen((event) {
       if (event != null) {
-        Navigator.pushReplacement(context,
+        // if (event.emailVerified) {
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        //     return HomePage();
+        //   }));
+        // } else {
+        //   FirebaseAuth.instance.signOut();
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        //     return LoginScreen();
+        //   }));
+        // }
+         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
           return HomePage();
         }));
@@ -41,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Login Screen",
+          "Login",
           style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
         ),
         centerTitle: true,
@@ -190,6 +200,68 @@ class _LoginScreenState extends State<LoginScreen> {
           });
     }
   }
+//   Future<void> _loginprocess(String email, String password) async {
+//   try {
+//     UserCredential userCredential = await FirebaseAuth.instance
+//         .signInWithEmailAndPassword(email: email, password: password);
+
+//     User? user = FirebaseAuth.instance.currentUser;
+
+//     if (user != null) {
+//       await user.reload(); // Reload user data to get the latest email verification status
+//       user = FirebaseAuth.instance.currentUser; // Refresh user instance
+
+//       if (user!.emailVerified) {
+//         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+//           return HomePage();
+//         }));
+//       } else {
+//         showDialog(
+//           context: context,
+//           builder: (context) {
+//             return AlertDialog(
+//               title: Text("Email not verified"),
+//               content: Text("Please verify your email to continue. A verification email has been sent to $email."),
+//               actions: [
+//                 TextButton(
+//                   onPressed: () async {
+//                     await user!.sendEmailVerification();
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text("Resend Verification Email"),
+//                 ),
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text("OK"),
+//                 ),
+//               ],
+//             );
+//           },
+//         );
+//       }
+//     }
+//   } on FirebaseAuthException catch (e) {
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: Text("Error"),
+//           content: Text(e.message ?? "An error occurred"),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text("OK"),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
 
   _setValuesToKey() async {
     if (_key.currentState!.validate()) {

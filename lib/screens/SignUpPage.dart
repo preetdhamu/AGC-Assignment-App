@@ -31,6 +31,16 @@ class _SignUpPageState extends State<SignUpPage> {
   checkAuthentication() async {
     await FirebaseAuth.instance.authStateChanges().listen((event) {
       if (event != null) {
+        // if (event.emailVerified) {
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        //     return HomePage();
+        //   }));
+        // } else {
+        //   FirebaseAuth.instance.signOut();
+        //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        //     return LoginScreen();
+        //   }));
+        // }
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
           return HomePage();
@@ -65,13 +75,74 @@ class _SignUpPageState extends State<SignUpPage> {
           });
     }
   }
+//   Future<void> Registerprocess(String email, String password) async {
+//   try {
+//     UserCredential userCredential = await FirebaseAuth.instance
+//         .createUserWithEmailAndPassword(email: email, password: password);
+
+//     User? user = FirebaseAuth.instance.currentUser;
+//     if (user != null && !user.emailVerified) {
+//       await user.sendEmailVerification();
+//       print('Verification email has been sent.');
+//     }
+
+//     print(email);
+//     String domain = email.split('@').last;
+//     List<String> teacherDomains = ['agc.edu', 'college.edu', 'school.edu'];
+//     bool isTeacher = teacherDomains.any((teacherDomain) => domain == teacherDomain);
+//     print("isTeacher is : $isTeacher");
+
+//     await FirebaseDatabase.instance
+//         .ref()
+//         .child('users')
+//         .child(userCredential.user!.uid)
+//         .set({'email': email, 'isTeacher': isTeacher});
+
+//     // Notify user to check their email for verification
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: Text("Verify your email"),
+//           content: Text("A verification email has been sent to $email. Please verify your email to continue."),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text("OK"),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   } on FirebaseAuthException catch (e) {
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: Text("Error"),
+//           content: Text(e.code.toString()),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text("OK"),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Sign Up",
+          "Register",
           style: TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
         ),
         centerTitle: true,

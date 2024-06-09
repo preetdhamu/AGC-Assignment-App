@@ -29,6 +29,7 @@ class _EditAssignmentState extends State<EditAssignment> {
   }
 getQuestions() async {
     _databaseReference
+        .child('subjects')
         .child(id)
         .child('Assigments')
         .child(assignmentId)
@@ -78,6 +79,8 @@ getQuestions() async {
                     questionData: question,
                     onSave: (updatedQuestion) {
                       setState(() {
+                        //deadline update 
+                        //subject update 
                         questions[index] = updatedQuestion;
                       });
                     });
@@ -98,7 +101,7 @@ getQuestions() async {
     });
     try {
       final DatabaseReference assignmentRef =
-          _databaseReference.child(id).child('Assigments').child(assignmentId);
+          _databaseReference.child('subjects').child(id).child('Assigments').child(assignmentId);
       final DataSnapshot snapshot = await assignmentRef.get();
       final Map<String, dynamic> existingData =
           Map<String, dynamic>.from(snapshot.value as Map);

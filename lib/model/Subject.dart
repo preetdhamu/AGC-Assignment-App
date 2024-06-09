@@ -39,7 +39,7 @@ class Subject {
     // });
 
     DatabaseReference reference = FirebaseDatabase.instance.ref();
-    DatabaseReference subjectReference = reference.child(_subjectcode);
+    DatabaseReference subjectReference = reference.child('subjects').child(_subjectcode);
     String assignemntKey = subjectReference.push().key!;
   
     subjectReference.child("Assigments").child(assignemntKey).set(assignment.toJson()).then((_) {

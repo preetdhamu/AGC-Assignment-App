@@ -1,4 +1,5 @@
 import 'package:agc/model/Assignment.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,9 @@ import 'package:docx_to_text/docx_to_text.dart';
 import 'package:file_picker/file_picker.dart';
 import '../model/QuizQuestion.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import '../model/Subject.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddAssignment extends StatefulWidget {
   final id;
@@ -20,6 +23,7 @@ class _AddAssignmentState extends State<AddAssignment> {
   String course = '';
   String semester = '';
   String department = '';
+  String instructor = '';
 
   List<QuizQuestion> questions = [];
   bool isLoad = true;
@@ -37,7 +41,7 @@ class _AddAssignmentState extends State<AddAssignment> {
   }
 
   getSubject(id) async {
-    _database.child(id).onValue.listen((event) {
+    _database.child('subjects').child(id).onValue.listen((event) {
       setState(() {
         _sub = Subject.fromSnapShot(event.snapshot);
         print("Subject is loaded successfully ${_sub.subname}");
@@ -45,20 +49,39 @@ class _AddAssignmentState extends State<AddAssignment> {
       });
     });
   }
+  
+  
+  Future<void> requestStoragePermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+  }
 
   Future<String?> pickDocxFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['docx'],
-    );
+    await requestStoragePermission();
+    if (await Permission.storage.isGranted) {
+      try {
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['docx'],
+        );
 
-    if (result != null) {
-      String docxPath = result.files.single.path!;
-      print("File Picked Successfully $docxPath");
-      return docxPath;
+        if (result != null) {
+          String docxPath = result.files.single.path!;
+          print("File Picked Successfully $docxPath");
+          return docxPath;
+        } else {
+          // User canceled the file picker.
+          print('File picking canceled.');
+          return null;
+        }
+      } catch (e) {
+        print('Error Picking file : $e');
+        return null;
+      }
     } else {
-      // User canceled the file picker.
-      print('File picking canceled.');
+      print("Storage permission not granted");
       return null;
     }
   }
@@ -124,11 +147,14 @@ class _AddAssignmentState extends State<AddAssignment> {
       semester = semester.trim().toUpperCase();
       department = department.toUpperCase();
       print("All keys are accessed");
-      Assignment assignment = Assignment(
-          course, semester, department, questions);
+      DateTime now = DateTime.now();
+      DateTime deadline = now.add(Duration(days: 1));
+      String deadline1 = DateFormat('yyyy-MM-dd').format(deadline);
+      Assignment assignment =
+          Assignment(course, semester, department, deadline1, questions);
       setState(() {
         _sub.addAssignment(assignment);
-        print("Assignment UPloaded Successfully ");
+        print("Assignment Uploaded Successfully ");
       });
       navigateToLastScreen(context);
     } else {
@@ -264,7 +290,6 @@ class _AddAssignmentState extends State<AddAssignment> {
                       color: Colors.black,
                     ),
                   ),
-                  
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
@@ -275,7 +300,7 @@ class _AddAssignmentState extends State<AddAssignment> {
                 ),
                 title: TextFormField(
                   enabled: false, // Set to false to disable the TextFormField
-                  initialValue: _sub.subcode , // Set the default value
+                  initialValue: _sub.subcode, // Set the default value
                   decoration: InputDecoration(
                     label: Text(
                       'Subjectcode',
@@ -287,7 +312,6 @@ class _AddAssignmentState extends State<AddAssignment> {
                       color: Colors.black,
                     ),
                   ),
-                  
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),

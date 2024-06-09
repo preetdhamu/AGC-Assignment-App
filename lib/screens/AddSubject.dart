@@ -26,7 +26,7 @@ _setValuesToKey() async {
 
     try {
       // Check if subject code already exists
-      DataSnapshot codeSnapshot = await _databaseReference.child(_subjectcode).get();
+      DataSnapshot codeSnapshot = await _databaseReference.child('subjects').child(_subjectcode).get();
 
       if (codeSnapshot.exists) {
         // Subject code already exists
@@ -38,7 +38,7 @@ _setValuesToKey() async {
 
       // Subject code does not exist, proceed with adding
       Subject sub = Subject(_subjectcode, _subjectname);
-      await _databaseReference.child(_subjectcode).set(sub.toJson());
+      await _databaseReference.child('subjects').child(_subjectcode).set(sub.toJson());
       print("Subject Created Successfully");
       navigateToLastScreen(context);
 

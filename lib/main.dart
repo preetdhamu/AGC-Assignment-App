@@ -11,7 +11,9 @@ Future<void> main() async {
               apiKey: "AIzaSyCGSW_HVB-yNXh9viN788GZ4PWwAiCTBSk",
               appId: "1:380668958200:android:1754545aeeca7e7092320d",
               messagingSenderId: "380668958200",
-              projectId: "agcapp-9652p"))
+              projectId: "agcapp-9652p" ,
+              storageBucket: "agcapp-9652p.appspot.com"
+              ))
       : await Firebase.initializeApp();
   runApp(myApp());
 }
