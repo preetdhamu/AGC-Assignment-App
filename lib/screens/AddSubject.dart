@@ -58,7 +58,7 @@ _setValuesToKey() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 177, 220, 255),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text("Add Subject"),
         centerTitle: true,
@@ -74,10 +74,11 @@ _setValuesToKey() async {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Subject Name";
@@ -98,10 +99,11 @@ _setValuesToKey() async {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Subject Code";
@@ -110,6 +112,7 @@ _setValuesToKey() async {
                   decoration: InputDecoration(
                     label: Text('Subject Code'),
                     labelStyle: TextStyle(
+                      
                         fontSize: 15.0,
                         fontStyle: FontStyle.italic,
                         color: Colors.black),
@@ -124,14 +127,12 @@ _setValuesToKey() async {
               ),
               SizedBox(
                 width: 300,
-                child: MaterialButton(
+                child: ElevatedButton(
                   onPressed: () {
                     _setValuesToKey();
                   },
-                  child: Text("Save"),
-                  minWidth: 150.0,
-                  height: 40,
-                  color: const Color.fromARGB(255, 142, 37, 30),
+                  child: Center(child: Text("Save" , style: TextStyle( color: const Color.fromARGB(255, 142, 37, 30),),)),
+                  
                 ),
               ),
             ],

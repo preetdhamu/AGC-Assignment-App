@@ -186,22 +186,79 @@ class _StartAssignmentState extends State<StartAssignment>
   }
 
   void _submitResult() {
-    final result = {
-      'studentUnivRollNo': userUnivRollNo,
-      'assignmentId': assignmentId,
-      'score': _score,
-      'timestamp': DateTime.now().toIso8601String(),
-    };
-
-    print(result);
-    // _databaseReference
-    //     .child('results')
-    //     .push()
-    //     .set(result)
-    //     .then((_) => print("Result Submitted Successfully "))
-    //     .catchError((error) => print("Failed to submit result : $error"));
-    Navigator.pop(context);
+  if (userUnivRollNo == '' ||
+      subname == '' ||
+      subcode == '' ||
+      userSemester == '' ||
+      userCourse == '' ||
+      userDepartment == '' ||
+      userCollegeRollNo == '' ||
+      userBatch == '' ||
+      assignmentId == '' ||
+      _score == -1 ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Assignment Not Submitted'),
+          content: Text('Update Your Profile First.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).popUntil((route) => route.isFirst); // Navigate to home page
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return ;
   }
+
+  final result = {
+    'studentUnivRollNo': userUnivRollNo,
+    'subname': subname,
+    'subcode': subcode,
+    'userSemester': userSemester,
+    'userCourse': userCourse,
+    'userDepartment': userDepartment,
+    'userCollegeRollNo': userCollegeRollNo,
+    'userBatch': userBatch,
+    'assignmentId': assignmentId,
+    'score': _score,
+    'timestamp': DateTime.now().toIso8601String(),
+  };
+
+  print(result);
+  _databaseReference.child('results').push().set(result).then((_) {
+    print("Result Submitted Successfully");
+
+    // Show the dialog after the result is submitted
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Assignment Submitted'),
+          content: Text('Your score is $_score.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).popUntil((route) => route.isFirst); // Navigate to home page
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }).catchError((error) {
+    print("Failed to submit result: $error");
+  });
+}
+
 
   void _nextQuestion() {
     // Check if an option is selected
@@ -310,10 +367,12 @@ class _StartAssignmentState extends State<StartAssignment>
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _selectedOption == -1 ? null : _nextQuestion,
-                  child: Text(
-                    _currentQuestionIndex == questions.length - 1
-                        ? 'Submit'
-                        : 'Next',
+                  child: Center(
+                    child: Text(
+                      _currentQuestionIndex == questions.length - 1
+                          ? 'Submit'
+                          : 'Next',
+                    ),
                   ),
                 ),
               ],

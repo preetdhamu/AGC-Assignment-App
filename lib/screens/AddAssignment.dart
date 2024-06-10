@@ -208,7 +208,7 @@ class _AddAssignmentState extends State<AddAssignment> {
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
-      backgroundColor: Color.fromARGB(255, 177, 220, 255),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Form(
           key: _key,
@@ -219,10 +219,11 @@ class _AddAssignmentState extends State<AddAssignment> {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Course ";
@@ -246,10 +247,11 @@ class _AddAssignmentState extends State<AddAssignment> {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Semester ";
@@ -273,10 +275,11 @@ class _AddAssignmentState extends State<AddAssignment> {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                 Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   enabled: false, // Set to false to disable the TextFormField
                   initialValue: _sub.subname, // Set the default value
                   decoration: InputDecoration(
@@ -295,10 +298,11 @@ class _AddAssignmentState extends State<AddAssignment> {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   enabled: false, // Set to false to disable the TextFormField
                   initialValue: _sub.subcode, // Set the default value
                   decoration: InputDecoration(
@@ -317,10 +321,11 @@ class _AddAssignmentState extends State<AddAssignment> {
               Padding(padding: EdgeInsets.symmetric(vertical: 15)),
               ListTile(
                 leading: Icon(
-                  Icons.data_object,
+                  Icons.label_important_outline_rounded,
                   color: Colors.black,
                 ),
                 title: TextFormField(
+                  style: TextStyle( color : Colors.black ),
                   validator: (input) {
                     if (input!.isEmpty) {
                       return "Enter Department";
@@ -348,7 +353,7 @@ class _AddAssignmentState extends State<AddAssignment> {
                 },
                 child: Text(
                   "Pick DOCX File",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
               ElevatedButton(
@@ -357,24 +362,23 @@ class _AddAssignmentState extends State<AddAssignment> {
                   },
                   child: Text(
                     "Show data",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   )),
               Padding(
                 padding: EdgeInsets.all(25.0),
               ),
               SizedBox(
                 width: 300,
-                child: MaterialButton(
+                child: ElevatedButton(
                   onPressed: () {
                     _setValuesToKey();
                   },
                   child: Text(
                     "Save",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: const Color.fromARGB(255, 142, 37, 30),),
                   ),
-                  minWidth: 150.0,
-                  height: 40,
-                  color: const Color.fromARGB(255, 142, 37, 30),
+                  
+                  
                 ),
               ),
             ],

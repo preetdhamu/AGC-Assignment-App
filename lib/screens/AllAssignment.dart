@@ -110,17 +110,18 @@ class _AllAssignmentState extends State<AllAssignment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: isLoading ? Text('Loading...') : Text("$_subname , $_subcode"),
+        title: isLoading ? Text('') : Text("All Assignments" , style: TextStyle( color:  Colors.white),),
+        centerTitle: true,
         backgroundColor: Colors.black,
       ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
-                color: Colors.red,
+                color: Colors.black,
               ),
             )
           : Container(
-              color: Colors.blue[100],
+              color: Colors.white,
               child: FirebaseAnimatedList(
                   query: _databaseReference
                       .child('subjects')
@@ -132,12 +133,14 @@ class _AllAssignmentState extends State<AllAssignment> {
                         Map<String, dynamic>.from(snapshot.value as Map);
 
                     return Container(
+                      
                       margin: EdgeInsets.all(20.0),
                       padding: EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                                        color: const Color.fromARGB(
+                                            255, 209, 209, 209),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -206,7 +209,7 @@ class _AllAssignmentState extends State<AllAssignment> {
                                         },
                                         child: Text(
                                           "Start",
-                                          style: TextStyle(color: Colors.red),
+                                          style: TextStyle(color: Colors.red , fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     )

@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
 import 'screens/HomePage.dart';
 import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: const FirebaseOptions(
-              apiKey: "AIzaSyCGSW_HVB-yNXh9viN788GZ4PWwAiCTBSk",
-              appId: "1:380668958200:android:1754545aeeca7e7092320d",
-              messagingSenderId: "380668958200",
-              projectId: "agcapp-9652p" ,
-              storageBucket: "agcapp-9652p.appspot.com"
-              ))
-      : await Firebase.initializeApp();
+  await dotenv.load(fileName: '.env');
+
+  String? apiKey = dotenv.env['API_KEY'];
+  String? appId = dotenv.env['APP_ID'];
+  String? messagingSenderId = dotenv.env['MESSAGE_SENDER_ID'];
+  String? projectId = dotenv.env['PROJECT_ID'];
+  String? storageBucket = dotenv.env['STORAGE_BUCKET'];
+
+  if (apiKey != null &&
+      appId != null &&
+      messagingSenderId != null &&
+      projectId != null &&
+      storageBucket != null) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: apiKey,
+        appId: appId,
+        messagingSenderId: messagingSenderId,
+        projectId: projectId,
+        storageBucket: storageBucket,
+      ),
+    );
+  } else {
+    // ignore: avoid_print
+   
+    print("One or more environment variables are missing.");
+    return; // Exit the application if environment variables are missing
+  }
+
   runApp(myApp());
 }
+
 
 class myApp extends StatelessWidget {
   @override

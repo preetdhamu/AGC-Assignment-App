@@ -4,6 +4,7 @@ import 'package:agc/screens/ProfileStudent.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:agc/screens/AllAssignment.dart';
 import 'package:agc/screens/AddSubject.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:agc/screens/ResultPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   String userSemester = '';
   String userCourse = '';
   String userDepartment = '';
+  String userunivRollNo = '';
 
   @override
   void initState() {
@@ -81,6 +84,7 @@ class _HomePageState extends State<HomePage> {
               userSemester = data['semester'] ?? '';
               userCourse = data['course'] ?? '';
               userDepartment = data['department'] ?? '';
+              userunivRollNo = data['univRollNo'] ?? '';
               print("semester of the user is :$userSemester");
             }
             user = firebaseUser;
@@ -126,7 +130,12 @@ class _HomePageState extends State<HomePage> {
     if (didAuthenticate) {
       await _dataReference.child("subjects").child(id).remove();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Subject Deleted Successfully"),
+        content: Text(
+          "Subject Deleted Successfully",
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
       ));
       return;
     } else {
@@ -136,7 +145,10 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (_) {
             return AlertDialog(
-              title: Text("Do you want to delete the subject?"),
+              title: Text(
+                "Do you want to delete the subject?",
+                
+              ),
               content: TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -162,7 +174,12 @@ class _HomePageState extends State<HomePage> {
                                 .remove();
                             setState(() {});
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Subject Deleted Successfully"),
+                              content: Text(
+                                "Subject Deleted Successfully",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
                             ));
                             Navigator.of(context).pop();
                           } else {
@@ -174,8 +191,18 @@ class _HomePageState extends State<HomePage> {
                               context: context,
                               builder: (context) {
                                 return const AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text("Fill the Credentials"),
+                                  title: Text(
+                                    "Error",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    "Fill the Credentials",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 );
                               });
                         }
@@ -184,18 +211,27 @@ class _HomePageState extends State<HomePage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text("Error"),
+                                title: Text(
+                                  "Error",
+                                  
+                                ),
                                 content: Text(e.code.toString()),
                               );
                             });
                       }
                     },
-                    child: Text("Delete")),
+                    child: Text(
+                      "Delete",
+                      
+                    )),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text("Cancel")),
+                    child: Text(
+                      "Cancel",
+                      
+                    )),
               ],
             );
           });
@@ -219,42 +255,63 @@ class _HomePageState extends State<HomePage> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color.fromARGB(
+                                            255, 209, 209, 209),
               ),
-              child: Text(
-                'Sidebar',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
+              child: Center(
+                child: Text(
+                  '$userunivRollNo',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                  ),
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.home),
-              title: Text('Home'),
+              title: Text(
+                'Home',
+               
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: Icon(Icons.person),
-              title: Text('Profile'),
+              title: Text(
+                'Profile',
+                
+              ),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ProfileStudent();
+                  return ProfileStudent(isTeacher: isTeacher);
                 }));
               },
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                // Navigate to the settings page.
-              },
-            ),
+            isTeacher
+                ? ListTile(
+                    leading: Icon(Icons.pending_actions),
+                    title: Text(
+                      'Result',
+                      
+                    ),
+                    onTap: () {
+                      // Navigate to the result page.
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return ResultPage();
+                      }));
+                    },
+                  )
+                : SizedBox.shrink(),
             ListTile(
               leading: Icon(Icons.logout),
-              title: Text('Logout'),
+              title: Text(
+                'Logout',
+                
+              ),
               onTap: () {
                 logout();
               },
@@ -263,14 +320,19 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text(isTeacher ? "HomePage Teahcer " : "Home"),
+        title: Text(
+          isTeacher ? "HomePage Teahcer " : "Home",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
       body: Center(
         child: !isLoad
             ? CircularProgressIndicator(
-                color: Colors.red,
+                color: Colors.black,
               )
             : isTeacher
                 ? Container(
@@ -333,53 +395,14 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       child: Column(
                         children: [
-                          const Text(
-                            'Deadline',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          // SingleChildScrollView(
-                          //   scrollDirection: Axis.horizontal,
-                          //   child: Row(
-                          //     children: [
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.amber,
-                          //       ),
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.orange,
-                          //       ),
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.brown,
-                          //       ),
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.red,
-                          //       ),
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.green,
-                          //       ),
-                          //       Container(
-                          //         height: 100,
-                          //         width: 100,
-                          //         color: Colors.blue,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+                          const Text('Notification',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              )),
                           Container(
-                            color: Colors.blue,
-                            height: 300,
+                            color: Colors.white,
+                            height: 200,
                             child: FirebaseAnimatedList(
                               query: _dataReference.child('subjects'),
                               itemBuilder: (BuildContext context,
@@ -388,7 +411,7 @@ class _HomePageState extends State<HomePage> {
                                   int index) {
                                 var subject = Map<String, dynamic>.from(
                                     snapshot.value as Map);
-                                print("The subjects in deadline is : $subject");
+
                                 var assignments = subject['Assigments']
                                     as Map<dynamic, dynamic>?;
 
@@ -397,13 +420,20 @@ class _HomePageState extends State<HomePage> {
                                 }
 
                                 List<Map<String, dynamic>> assignmentList = [];
+                                DateTime now = DateTime.now();
                                 assignments.values.forEach((value) {
                                   var assignment =
                                       Map<String, dynamic>.from(value);
+                                  DateTime deadline =
+                                      DateTime.parse(assignment['deadline']);
                                   if (assignment['semester'] == userSemester &&
                                       assignment['course'] == userCourse &&
                                       assignment['department'] ==
-                                          userDepartment) {
+                                          userDepartment &&
+                                      deadline.isAfter(
+                                          now.subtract(Duration(days: 1))) &&
+                                      deadline.isBefore(
+                                          now.add(Duration(days: 2)))) {
                                     assignmentList.add(assignment);
                                   }
                                 });
@@ -426,42 +456,53 @@ class _HomePageState extends State<HomePage> {
                                       margin: EdgeInsets.all(10.0),
                                       padding: EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
-                                        color: Colors.white,
+                                        color: const Color.fromARGB(
+                                            255, 209, 209, 209),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            subject["subjectname"] ?? '',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
+                                          Center(
+                                            child: Text(
+                                              subject["subjectname"] ?? '',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                          Text(
-                                            "Deadline : ${addOneDay(assignment['deadline'])}",
-                                            style: TextStyle(
-                                              color: Colors.red,
+                                          Center(
+                                            child: Text(
+                                              "Deadline : ${addOneDay(assignment['deadline'])}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
-                                          Text(
-                                            "Department: ${assignment['department']}",
-                                            style: TextStyle(
-                                              color: Colors.black,
+                                          Center(
+                                            child: Text(
+                                              "Department: ${assignment['department']}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
-                                          Text(
-                                            "Semester: ${assignment['semester']}",
-                                            style: TextStyle(
-                                              color: Colors.black,
+                                          Center(
+                                            child: Text(
+                                              "Semester: ${assignment['semester']}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
-                                          Text(
-                                            "Course: ${assignment['course']}",
-                                            style: TextStyle(
-                                              color: Colors.black,
+                                          Center(
+                                            child: Text(
+                                              "Course: ${assignment['course']}",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -472,26 +513,16 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           ),
-
                           const Text(
                             'List of Subjects ',
                             style: TextStyle(
-                              color: Colors.red,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
                             ),
                           ),
-                          // GridView.count(
-                          //     shrinkWrap: true,
-                          //     physics: NeverScrollableScrollPhysics(),
-
-                          //     crossAxisCount: 2,
-                          //     children: [
-                          //       //iterated from the list
-
-                          //     ],
-                          //   ),
                           Container(
-                            height: 150,
+                            height: 250,
                             // width: 500,
 
                             child: FirebaseAnimatedList(
@@ -511,9 +542,12 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   child: Container(
                                     height: 100,
-                                    color:
-                                        const Color.fromRGBO(255, 235, 59, 1),
-                                    margin: EdgeInsets.all(20.0),
+                                    decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 209, 209, 209),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    margin: EdgeInsets.all(10.0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -543,16 +577,16 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           ),
-
                           const Text(
                             'Enrolled Courses',
                             style: TextStyle(
-                              color: Colors.red,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Container(
-                            color: Colors.blue,
+                            color: Colors.white,
+                            
                             // height: 150,
                             child: FutureBuilder<DatabaseEvent>(
                               future: _dataReference.child('subjects').once(),
@@ -609,17 +643,21 @@ class _HomePageState extends State<HomePage> {
                                   itemBuilder: (context, index) {
                                     var course = courseList[index];
                                     return Container(
+
                                       margin: EdgeInsets.all(10.0),
                                       padding: EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
-                                        color: Colors.white,
+                                        color: const Color.fromARGB(
+                                            255, 209, 209, 209),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: Text(
-                                        course ?? '',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
+                                      child: Center(
+                                        child: Text(
+                                          course ?? '',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -628,73 +666,29 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           ),
-                          const Text(
-                            'Submitted Assignments',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.amber,
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.orange,
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.brown,
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.red,
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.green,
-                                ),
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  color: Colors.blue,
-                                ),
-                              ],
-                            ),
-                          ),
-                          InkWell(
-                            child: Text(
-                              'Suggestion/ Complaines',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          // InkWell(
+                          //   child: Text(
+                          //     'Suggestion/ Complaines',
+                          //     style: TextStyle(
+                          //       color: Colors.black,
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
                   ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.black,
-        onPressed: () {
-          if (isTeacher) {
-            navigateToAddSubject();
-          }
-        },
-      ),
+      floatingActionButton: isTeacher
+          ? FloatingActionButton(
+              child: Icon(Icons.add),
+              backgroundColor: Colors.black,
+              onPressed: () {
+                navigateToAddSubject();
+              },
+            )
+          : SizedBox.shrink(),
     );
   }
 }

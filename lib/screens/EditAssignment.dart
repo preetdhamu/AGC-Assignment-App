@@ -68,7 +68,9 @@ getQuestions() async {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Assignment'),
+        centerTitle: true,
       ),
+      backgroundColor: Colors.white,
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -162,6 +164,7 @@ class _QuestionFormState extends State<QuestionForm> {
       child: Column(
         children: <Widget>[
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _question,
             decoration: InputDecoration(labelText: 'Question'),
             onSaved: (value) {
@@ -175,6 +178,7 @@ class _QuestionFormState extends State<QuestionForm> {
             },
           ),
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _option1,
             decoration: InputDecoration(labelText: 'Option 1'),
             onSaved: (value) {
@@ -188,6 +192,7 @@ class _QuestionFormState extends State<QuestionForm> {
             },
           ),
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _option2,
             decoration: InputDecoration(labelText: 'Option 2'),
             onSaved: (value) {
@@ -201,6 +206,7 @@ class _QuestionFormState extends State<QuestionForm> {
             },
           ),
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _option3,
             decoration: InputDecoration(labelText: 'Option 3'),
             onSaved: (value) {
@@ -214,8 +220,9 @@ class _QuestionFormState extends State<QuestionForm> {
             },
           ),
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _option4,
-            decoration: InputDecoration(labelText: 'Option 4'),
+            decoration: InputDecoration(labelText: 'Option 4' , ),
             onSaved: (value) {
               _option4 = value!;
             },
@@ -227,6 +234,7 @@ class _QuestionFormState extends State<QuestionForm> {
             },
           ),
           TextFormField(
+            style: TextStyle( color : Colors.black ),
             initialValue: _correctAnswer,
             decoration: InputDecoration(labelText: 'Correct Answer'),
             onSaved: (value) {

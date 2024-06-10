@@ -6,8 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class ProfileStudent extends StatefulWidget {
+  final bool isTeacher;
+  ProfileStudent({required this.isTeacher});
   @override
-  _ProfileStudentState createState() => _ProfileStudentState();
+  _ProfileStudentState createState() => _ProfileStudentState(this.isTeacher);
 }
 
 class _ProfileStudentState extends State<ProfileStudent> {
@@ -20,9 +22,12 @@ class _ProfileStudentState extends State<ProfileStudent> {
   final _univRollController = TextEditingController();
   final _departmentController = TextEditingController();
   File? _profileImage;
+  final _nameController = TextEditingController();
   String? _profileImageUrl;
   final picker = ImagePicker();
+  bool isTeacher;
 
+  _ProfileStudentState(this.isTeacher);
   @override
   void initState() {
     super.initState();
@@ -41,13 +46,17 @@ class _ProfileStudentState extends State<ProfileStudent> {
 
       if (data != null) {
         setState(() {
-          _batchController.text = data['batch'] ?? '';
-          _courseController.text = data['course'] ?? '';
-          _collegeRollController.text = data['collegeRollNo'] ?? '';
-          _univRollController.text = data['univRollNo'] ?? '';
           _profileImageUrl = data['profilePhoto'] ?? '';
-          _departmentController.text = data['department'] ?? '';
-          _semController.text = data['semester'] ?? '';
+          if (!isTeacher) {
+            _batchController.text = data['batch'] ?? '';
+            _courseController.text = data['course'] ?? '';
+            _collegeRollController.text = data['collegeRollNo'] ?? '';
+            _univRollController.text = data['univRollNo'] ?? '';
+            _departmentController.text = data['department'] ?? '';
+            _semController.text = data['semester'] ?? '';
+          } else {
+            _nameController.text = data['name'] ?? '';
+          }
         });
       }
     }
@@ -85,16 +94,22 @@ class _ProfileStudentState extends State<ProfileStudent> {
 
           DatabaseReference userRef =
               FirebaseDatabase.instance.ref().child('users').child(user!.uid);
-
-          await userRef.update({
-            'batch': _batchController.text.toUpperCase().trim(),
-            'course': _courseController.text.toUpperCase().trim(),
-            'collegeRollNo': _collegeRollController.text.toUpperCase().trim(),
-            'univRollNo': _univRollController.text.toUpperCase().trim(),
-            'profilePhoto': photoUrl,
-            'department': _departmentController.text.toUpperCase().trim(),
-            'semester': _semController.text.toUpperCase().trim(),
-          });
+          if (!isTeacher) {
+            await userRef.update({
+              'batch': _batchController.text.toUpperCase().trim(),
+              'course': _courseController.text.toUpperCase().trim(),
+              'collegeRollNo': _collegeRollController.text.toUpperCase().trim(),
+              'univRollNo': _univRollController.text.toUpperCase().trim(),
+              'profilePhoto': photoUrl,
+              'department': _departmentController.text.toUpperCase().trim(),
+              'semester': _semController.text.toUpperCase().trim(),
+            });
+          }else{
+            await userRef.update({
+              'profilePhoto': photoUrl,
+              'name':_nameController.text.toUpperCase().trim(),
+            });
+          }
 
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -129,14 +144,17 @@ class _ProfileStudentState extends State<ProfileStudent> {
     _univRollController.dispose();
     _departmentController.dispose();
     _semController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Update Profile'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -146,7 +164,9 @@ class _ProfileStudentState extends State<ProfileStudent> {
             children: [
               CircleAvatar(
                 radius: 75, // This controls the size of the circle
-                backgroundColor: Colors.grey[200],
+                backgroundColor: const Color.fromARGB(
+                                            255, 209, 209, 209),
+
                 backgroundImage: _profileImageUrl != null
                     ? NetworkImage(_profileImageUrl!) as ImageProvider
                     : _profileImage != null
@@ -163,7 +183,8 @@ class _ProfileStudentState extends State<ProfileStudent> {
                 onPressed: _pickImage,
                 child: Text('Pick Profile Image'),
               ),
-              TextFormField(
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _batchController,
                 decoration: InputDecoration(labelText: 'Batch'),
                 validator: (value) {
@@ -172,8 +193,9 @@ class _ProfileStudentState extends State<ProfileStudent> {
                   }
                   return null;
                 },
-              ),
-              TextFormField(
+              ): SizedBox.shrink(),
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _courseController,
                 decoration: InputDecoration(labelText: 'Course'),
                 validator: (value) {
@@ -182,54 +204,71 @@ class _ProfileStudentState extends State<ProfileStudent> {
                   }
                   return null;
                 },
-              ),
-              TextFormField(
+              ) : SizedBox.shrink(),
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _semController,
-                decoration: InputDecoration(labelText: 'Semester'),
+                decoration: InputDecoration(labelText: 'Semester' ,fillColor: Colors.black),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Semester';
                   }
                   return null;
                 },
-              ),
-              TextFormField(
+              ): SizedBox.shrink(),
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _departmentController,
-                decoration: InputDecoration(labelText: 'Department'),
+                decoration: InputDecoration(labelText: 'Department' ,fillColor: Colors.black),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your Department';
                   }
                   return null;
                 },
-              ),
-              TextFormField(
+              ) : SizedBox.shrink(),
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _collegeRollController,
-                decoration: InputDecoration(labelText: 'College Roll No'),
+                decoration: InputDecoration(labelText: 'College Roll No' ,fillColor: Colors.black)  ,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your college roll number';
                   }
                   return null;
                 },
-              ),
-              TextFormField(
+              ) : SizedBox.shrink() ,
+              !isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
                 controller: _univRollController,
-                decoration: InputDecoration(labelText: 'University Roll No'),
+                decoration: InputDecoration(labelText: 'University Roll No' , fillColor: Colors.black),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your university roll number';
                   }
                   return null;
                 },
-              ),
+              ) : SizedBox.shrink(),
+              isTeacher ? TextFormField(
+                style: TextStyle( color : Colors.black ),
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name' , fillColor: Colors.black) ,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your Name';
+                  }
+                  return null;
+                },
+              ) : SizedBox.shrink(),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   print(_profileImage.toString());
                   _updateProfile();
                 },
-                child: Text('Update Profile'),
+                child: Text('Update Profile' , style: TextStyle( color:const Color.fromARGB(
+                                            255, 209, 209, 209),
+ ),),
               ),
             ],
           ),
