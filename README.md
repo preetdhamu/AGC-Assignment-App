@@ -18,9 +18,11 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## ScreenShots
-replace ![ image](https://your-image-url.type) with <img src="https://your-image-url.type" width="100" height="100">
+replace ![ image](https://your-image-url.type) with 
 ### Login Screen
-![Login](https://github.com/preetdhamu/AGC-Assignment-App/assets/108987388/8f34f28e-e347-4350-a4fb-c522a1711cab)
+<img src="https://github.com/preetdhamu/AGC-Assignment-App/assets/108987388/8f34f28e-e347-4350-a4fb-c522a1711cab" width="100" height="100">
+<img src="" width="100" height="100">
+
 ### Register Screen
 ![Register](https://github.com/preetdhamu/AGC-Assignment-App/assets/108987388/7e4b5f20-f7f2-4681-8747-1e2fee48afeb)
 
